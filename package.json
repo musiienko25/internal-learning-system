@@ -14,9 +14,16 @@
   "scripts": {
     "dev:api": "pnpm --filter api start:dev",
     "dev:web": "pnpm --filter web dev",
+    "dev:stack": "concurrently -k -n api,web -c blue,green \"pnpm --filter api start:dev\" \"wait-on tcp:3000 && pnpm --filter web dev\"",
     "build": "pnpm --filter api build && pnpm --filter web build",
     "lint": "pnpm -r lint",
     "lint:ci": "pnpm --filter api run lint:ci && pnpm --filter web lint",
-    "test": "pnpm --filter api test"
+    "test": "pnpm --filter api test",
+    "test:integration": "pnpm --filter api test:integration",
+    "test:e2e": "pnpm --filter web test:e2e"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "wait-on": "^8.0.1"
   }
 }

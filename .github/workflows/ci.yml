@@ -12,7 +12,25 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: learning
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d learning"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://app:app@localhost:5432/learning
 
     steps:
       - name: Checkout
@@ -34,15 +52,72 @@ jobs:
 
       - name: Prisma generate
         run: pnpm --filter api exec prisma generate
-        env:
-          # Required by apps/api/prisma.config.ts; generate does not connect to the DB.
-          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      - name: Prisma migrate deploy
+        run: pnpm --filter api exec prisma migrate deploy
 
       - name: Lint
         run: pnpm run lint:ci
 
-      - name: Test API
+      - name: Test API (unit)
         run: pnpm test
+
+      - name: Test API (integration)
+        run: pnpm test:integration
 
       - name: Build
         run: pnpm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter web exec playwright install --with-deps chromium
+
+      - name: Start full stack (Docker Compose)
+        run: docker compose up -d --build
+
+      - name: Wait for web
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS http://localhost:8080/ >/dev/null 2>&1; then
+              echo "Web is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Timeout waiting for http://localhost:8080"
+          exit 1
+
+      - name: Run Playwright
+        run: pnpm --filter web test:e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:8080
+          PLAYWRIGHT_SKIP_WEBSERVER: '1'
+
+      - name: Docker Compose logs
+        if: failure()
+        run: docker compose logs --no-color || true
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down
