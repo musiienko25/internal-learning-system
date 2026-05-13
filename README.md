@@ -1,82 +1,82 @@
-# Внутрішня платформа навчання (курси)
+# Internal learning platform (courses)
 
-Monorepo: **NestJS** REST API (`apps/api`), **Vite + React 19** SPA (`apps/web`), **PostgreSQL** + **Prisma**, запуск через **Docker Compose**.
+Monorepo: **NestJS** REST API (`apps/api`), **Vite + React 19** SPA (`apps/web`), **PostgreSQL** + **Prisma**, run via **Docker Compose**.
 
-## Вимоги
+## Requirements
 
-- **Node.js** 22 LTS (для локальної розробки без Docker)
+- **Node.js** 22 LTS (for local development without Docker)
 - **pnpm** 9+ (`corepack enable pnpm`)
-- **Docker** та **Docker Compose** v2 (для повного стеку однією командою)
+- **Docker** and **Docker Compose** v2 (for the full stack with one command)
 
-## Швидкий старт (Docker)
+## Quick start (Docker)
 
-З кореня репозиторію:
+From the repository root:
 
 ```bash
 docker compose up --build
 ```
 
-Після старту:
+After startup:
 
 - API: `http://localhost:3000/api`
 - SPA (nginx): `http://localhost:8080`
 
-У контейнері API автоматично виконуються `prisma migrate deploy` та `prisma db seed` перед запуском Nest.
+Inside the API container, `prisma migrate deploy` and `prisma db seed` run automatically before Nest starts.
 
-## Локальна розробка (без Docker для API)
+## Local development (API without Docker)
 
-1. Підніміть PostgreSQL (наприклад лише БД з compose):
+1. Start PostgreSQL (for example only the DB from Compose):
 
    ```bash
    docker compose up db
    ```
 
-2. Скопіюйте змінні середовища:
+2. Copy environment variables:
 
    ```bash
    cp .env.example apps/api/.env
    ```
 
-   За потреби змініть `DATABASE_URL` (якщо порт БД не `5432`).
+   Adjust `DATABASE_URL` if the DB port is not `5432`.
 
-3. Залежності та Prisma:
+3. Dependencies and Prisma:
 
    ```bash
    pnpm install
    cd apps/api && pnpm exec prisma migrate deploy && pnpm exec prisma db seed
    ```
 
-4. У двох терміналах з кореня:
+4. In two terminals from the repo root:
 
    ```bash
    pnpm dev:api
    pnpm dev:web
    ```
 
-   Фронт: `http://localhost:5173` (Vite проксує `/api` на `http://localhost:3000`).
+   Frontend: `http://localhost:5173` (Vite proxies `/api` to `http://localhost:3000`).
 
-Переконайтесь, що в `apps/api/.env` задано `FRONTEND_ORIGIN` з `http://localhost:5173` (див. `.env.example`).
+Make sure `apps/api/.env` sets `FRONTEND_ORIGIN` to include `http://localhost:5173` (see `.env.example`).
 
-## Міграції та seed
+## Migrations and seed
 
-| Команда (з `apps/api`) | Призначення |
-|------------------------|-------------|
-| `pnpm exec prisma migrate dev` | Нова міграція в розробці (потрібна жива БД) |
-| `pnpm exec prisma migrate deploy` | Накат міграцій (CI / Docker / прод) |
-| `pnpm exec prisma db seed` | Seed курсів і тестового користувача |
+| Command (from `apps/api`) | Purpose |
+|---------------------------|---------|
+| `pnpm exec prisma migrate dev` | Create a new migration in development (needs a running DB) |
+| `pnpm exec prisma migrate deploy` | Apply migrations (CI / Docker / prod) |
+| `pnpm exec prisma db seed` | Seed courses and the test user |
 
-Seed ідемпотентний (upsert курсів і користувача за email).
+The seed is idempotent (upserts courses and the user by email).
 
-## Тестовий акаунт після seed
+## Test account after seed
 
-| Поле | Значення |
-|------|----------|
+| Field | Value |
+|-------|-------|
 | Email | `trainer@bank.ua` |
-| Пароль | `Test123!` |
+| Password | `Test123!` |
 
-## Приклади `curl`
+## `curl` examples
 
-Реєстрація:
+Register:
 
 ```bash
 curl -s -X POST http://localhost:3000/api/auth/register \
@@ -84,7 +84,7 @@ curl -s -X POST http://localhost:3000/api/auth/register \
   -d '{"name":"Olena Koval","email":"o.koval@bank.ua","password":"secret123"}'
 ```
 
-Логін:
+Login:
 
 ```bash
 curl -s -X POST http://localhost:3000/api/auth/login \
@@ -92,10 +92,10 @@ curl -s -X POST http://localhost:3000/api/auth/login \
   -d '{"email":"trainer@bank.ua","password":"Test123!"}'
 ```
 
-Збережіть `token` з відповіді, далі:
+Save `token` from the response, then:
 
 ```bash
-TOKEN="<вставте_jwt>"
+TOKEN="<paste_jwt_here>"
 
 curl -s http://localhost:3000/api/courses -H "Authorization: Bearer $TOKEN"
 
@@ -105,7 +105,7 @@ curl -s -X POST "http://localhost:3000/api/courses/10000000-0000-4000-8000-00000
 curl -s http://localhost:3000/api/users/me/courses -H "Authorization: Bearer $TOKEN"
 ```
 
-## REST ендпоінти
+## REST endpoints
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
@@ -113,22 +113,22 @@ curl -s http://localhost:3000/api/users/me/courses -H "Authorization: Bearer $TO
 - `POST /api/courses/:id/enroll` (Bearer JWT)
 - `GET /api/users/me/courses` (Bearer JWT)
 
-## Структура
+## Project layout
 
-- `apps/api` — NestJS, Prisma, JWT, валідація DTO (`class-validator`)
-- `apps/web` — React Router, TanStack Query, сторінки `/login`, `/register`, `/courses`, `/my-courses`
+- `apps/api` — NestJS, Prisma, JWT, DTO validation (`class-validator`)
+- `apps/web` — React Router, TanStack Query, routes `/login`, `/register`, `/courses`, `/my-courses`
 - `docker-compose.yml` — `db`, `api`, `web`
 
-## Змінні середовища (API)
+## Environment variables (API)
 
-| Змінна | Опис |
-|--------|------|
-| `DATABASE_URL` | Рядок підключення PostgreSQL |
-| `JWT_SECRET` | Секрет підпису JWT |
-| `PORT` | Порт HTTP (за замовчуванням `3000`) |
-| `FRONTEND_ORIGIN` | CORS: один origin або кілька через кому |
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `JWT_SECRET` | Secret for signing JWTs |
+| `PORT` | HTTP port (default `3000`) |
+| `FRONTEND_ORIGIN` | CORS: one origin or several, comma-separated |
 
-## Збірка без Docker
+## Build without Docker
 
 ```bash
 pnpm install
