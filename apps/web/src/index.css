@@ -232,6 +232,21 @@ a:hover {
   box-shadow: var(--shadow);
 }
 
+.my-list__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.my-list__title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
 .my-list__meta {
   margin: 0.5rem 0 0;
   display: grid;

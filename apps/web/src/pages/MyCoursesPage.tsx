@@ -43,8 +43,8 @@ export function MyCoursesPage() {
       <ul className="my-list">
         {items.map((c) => (
           <li key={`${c.id}-${c.enrolledAt}`} className="my-list__item">
-            <div>
-              <strong>{c.title}</strong>
+            <div className="my-list__head">
+              <strong className="my-list__title">{c.title}</strong>
               {c.isMandatory ? (
                 <span className="badge badge--mandatory">Обов’язковий</span>
               ) : null}
