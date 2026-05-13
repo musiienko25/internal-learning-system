@@ -1,6 +1,8 @@
 import {
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
@@ -26,6 +28,7 @@ export class CoursesController {
   }
 
   @Post(':id/enroll')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt'))
   enroll(
     @Param('id', new ParseUUIDPipe({ version: '4' })) courseId: string,
