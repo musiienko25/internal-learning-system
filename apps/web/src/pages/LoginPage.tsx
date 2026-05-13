@@ -44,6 +44,8 @@ export function LoginPage() {
           <label className="form-field">
             <span>Email</span>
             <input
+              id="login-email"
+              name="email"
               type="email"
               autoComplete="email"
               value={email}
@@ -54,6 +56,8 @@ export function LoginPage() {
           <label className="form-field">
             <span>Пароль</span>
             <input
+              id="login-password"
+              name="password"
               type="password"
               autoComplete="current-password"
               value={password}

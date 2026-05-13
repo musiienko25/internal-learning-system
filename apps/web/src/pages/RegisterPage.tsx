@@ -45,6 +45,8 @@ export function RegisterPage() {
           <label className="form-field">
             <span>Ім’я</span>
             <input
+              id="register-name"
+              name="name"
               type="text"
               autoComplete="name"
               value={name}
@@ -55,6 +57,8 @@ export function RegisterPage() {
           <label className="form-field">
             <span>Email</span>
             <input
+              id="register-email"
+              name="email"
               type="email"
               autoComplete="email"
               value={email}
@@ -65,6 +69,8 @@ export function RegisterPage() {
           <label className="form-field">
             <span>Пароль (мін. 6 символів)</span>
             <input
+              id="register-password"
+              name="password"
               type="password"
               autoComplete="new-password"
               value={password}
