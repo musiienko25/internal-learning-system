@@ -134,3 +134,9 @@ curl -s http://localhost:3000/api/users/me/courses -H "Authorization: Bearer $TO
 pnpm install
 pnpm build
 ```
+
+## Unit tests (API)
+
+```bash
+pnpm --filter api test
+```
