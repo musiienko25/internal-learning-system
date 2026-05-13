@@ -8,7 +8,10 @@ function parseCorsOrigins(): string | boolean | string[] {
   if (!raw || raw === '*') {
     return true;
   }
-  const parts = raw.split(',').map((s) => s.trim()).filter(Boolean);
+  const parts = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
   return parts.length === 1 ? parts[0] : parts;
 }
 
@@ -31,4 +34,4 @@ async function bootstrap() {
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
 }
-bootstrap();
+void bootstrap();
