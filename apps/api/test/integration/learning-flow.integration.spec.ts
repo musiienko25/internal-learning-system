@@ -38,7 +38,6 @@ describe('Learning flow (HTTP integration)', () => {
     if (!process.env.DATABASE_URL) {
       throw new Error('DATABASE_URL must be set to run integration tests');
     }
-    process.env.JWT_SECRET ??= 'integration-jwt-secret';
 
     const apiRoot = path.join(__dirname, '../..');
     execSync('pnpm exec prisma migrate deploy', {

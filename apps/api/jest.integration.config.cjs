@@ -4,6 +4,7 @@ module.exports = {
   rootDir: '.',
   testEnvironment: 'node',
   testMatch: ['<rootDir>/test/integration/**/*.integration.spec.ts'],
+  setupFiles: ['<rootDir>/test/integration/setup-integration-env.ts'],
   transform: {
     '^.+\\.(t|j)s$': [
       'ts-jest',
