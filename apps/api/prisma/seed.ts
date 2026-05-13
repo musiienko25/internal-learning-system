@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { createDatabasePrismaClient } from '../src/prisma/create-prisma';
 
-const prisma = new PrismaClient();
+const prisma = createDatabasePrismaClient();
 
 const SEED_USER_ID = '20000000-0000-4000-8000-000000000001';
 const SEED_EMAIL = 'trainer@bank.ua';

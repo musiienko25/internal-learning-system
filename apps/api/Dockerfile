@@ -14,6 +14,9 @@ COPY apps/api apps/api
 
 WORKDIR /app/apps/api
 
+# prisma.config.ts uses env("DATABASE_URL"); generate does not connect, value must only resolve
+ENV DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/dummy?schema=public"
+
 RUN pnpm exec prisma generate && pnpm run build
 
 COPY apps/api/docker-entrypoint.sh /entrypoint.sh
