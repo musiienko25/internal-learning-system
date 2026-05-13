@@ -133,6 +133,10 @@ curl -s http://localhost:3000/api/users/me/courses -H "Authorization: Bearer $TO
 
 Minimal stats UI at `/admin` (header `X-Admin-Key` must match `ADMIN_API_KEY`). The API route is `GET /api/admin/stats`.
 
+## Real-time (Socket.IO)
+
+The API process also hosts Socket.IO. Connect to namespace `/realtime` on the same host and port as HTTP (default `3000`). Emitting the `ping` event returns `{ ts, message: 'pong' }`.
+
 ## Build without Docker
 
 ```bash
