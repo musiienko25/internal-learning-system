@@ -5,7 +5,7 @@ import {
   fetchCourses,
   fetchMyCourses,
 } from '../api/courses';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import { ApiError } from '../lib/api';
 
 export function CoursesPage() {
