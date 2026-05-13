@@ -2,7 +2,6 @@
 node_modules/
 **/node_modules/
 
-# Локальний pnpm store всередині репо (не комітити)
 .pnpm-store/
 
 dist
