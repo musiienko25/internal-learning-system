@@ -116,7 +116,7 @@ curl -s http://localhost:3000/api/users/me/courses -H "Authorization: Bearer $TO
 ## Project layout
 
 - `apps/api` — NestJS, Prisma, JWT, DTO validation (`class-validator`)
-- `apps/web` — React Router, TanStack Query, routes `/login`, `/register`, `/courses`, `/my-courses`
+- `apps/web` — React Router, TanStack Query, routes `/login`, `/register`, `/courses`, `/my-courses`, `/admin`
 - `docker-compose.yml` — `db`, `api`, `web`
 
 ## Environment variables (API)
@@ -127,6 +127,11 @@ curl -s http://localhost:3000/api/users/me/courses -H "Authorization: Bearer $TO
 | `JWT_SECRET` | Secret for signing JWTs |
 | `PORT` | HTTP port (default `3000`) |
 | `FRONTEND_ORIGIN` | CORS: one origin or several, comma-separated |
+| `ADMIN_API_KEY` | Optional. When set, enables `GET /api/admin/stats`; the browser must send the same value in the `X-Admin-Key` header (see `/admin` in the web app). Docker Compose sets `docker-admin-demo-key` for local demos. |
+
+## Admin panel (optional)
+
+Minimal stats UI at `/admin` (header `X-Admin-Key` must match `ADMIN_API_KEY`). The API route is `GET /api/admin/stats`.
 
 ## Build without Docker
 

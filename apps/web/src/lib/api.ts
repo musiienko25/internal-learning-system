@@ -29,7 +29,7 @@ export function messageFromBody(body: unknown): string {
 
 export async function apiFetch<T>(
   path: string,
-  options: RequestInit & { token?: string | null } = {},
+  options: RequestInit & { token?: string | null; adminKey?: string } = {},
 ): Promise<T> {
   const origin = getApiOrigin();
   const url = `${origin}/api${path.startsWith('/') ? path : `/${path}`}`;
@@ -40,6 +40,9 @@ export async function apiFetch<T>(
   const token = options.token;
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
+  }
+  if (options.adminKey) {
+    headers.set('X-Admin-Key', options.adminKey);
   }
   const res = await fetch(url, {
     ...options,

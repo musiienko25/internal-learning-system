@@ -71,6 +71,8 @@ export function LoginPage() {
         </form>
         <p className="auth-card__footer">
           Немає акаунта? <Link to="/register">Зареєструватись</Link>
+          {' · '}
+          <Link to="/admin">Admin</Link>
         </p>
       </div>
     </div>
