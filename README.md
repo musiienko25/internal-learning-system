@@ -39,6 +39,8 @@ Inside the API container, `prisma migrate deploy` and `prisma db seed` run autom
 
    Adjust `DATABASE_URL` if the DB port is not `5432`.
 
+   The API entrypoint loads `apps/api/.env` automatically (from the repo root or from `apps/api` when you run `pnpm dev:api` / `pnpm dev:stack`), so you do not need to `export` variables manually for local development.
+
 3. Dependencies and Prisma:
 
    ```bash
@@ -79,7 +81,7 @@ The seed is idempotent (upserts courses and the user by email).
 | Command | When |
 |---------|------|
 | `pnpm test` | Unit tests (API, Jest; no database). |
-| `pnpm test:integration` | HTTP integration tests against PostgreSQL. Set `DATABASE_URL` and apply migrations (`pnpm --filter api exec prisma migrate deploy`). |
+| `pnpm test:integration` | HTTP integration tests against PostgreSQL. Loads `apps/api/.env` when present; otherwise set `DATABASE_URL`. Apply migrations first (`pnpm --filter api exec prisma migrate deploy`). |
 | `pnpm dev:stack` | API + Vite together (DB must be running). |
 | `pnpm test:e2e` | Playwright (Chromium): registers / logs in and checks the catalog. With `dev:stack` the config starts servers automatically; against Docker use `PLAYWRIGHT_SKIP_WEBSERVER=1` and `PLAYWRIGHT_BASE_URL=http://localhost:8080`. |
 

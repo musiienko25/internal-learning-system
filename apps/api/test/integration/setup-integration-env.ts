@@ -1,3 +1,5 @@
+import '../../src/load-env';
+
 /**
  * Runs before the integration spec file is loaded (see jest `setupFiles`).
  * JwtModule.register() and JwtStrategy read JWT_SECRET when AuthModule / providers

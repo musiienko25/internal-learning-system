@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import type { Server } from 'node:http';
 import * as path from 'node:path';
@@ -40,14 +40,24 @@ describe('Learning flow (HTTP integration)', () => {
     }
 
     const apiRoot = path.join(__dirname, '../..');
-    execSync('pnpm exec prisma migrate deploy', {
-      cwd: apiRoot,
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        DATABASE_URL: process.env.DATABASE_URL,
+    const repoRoot = path.join(apiRoot, '..');
+    const migrate = spawnSync(
+      'pnpm',
+      ['--filter', 'api', 'exec', 'prisma', 'migrate', 'deploy'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf-8',
+        env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
       },
-    });
+    );
+    if (migrate.error) {
+      throw migrate.error;
+    }
+    if (migrate.status !== 0) {
+      throw new Error(
+        `prisma migrate deploy failed (exit ${migrate.status}):\n${migrate.stdout ?? ''}\n${migrate.stderr ?? ''}`,
+      );
+    }
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
